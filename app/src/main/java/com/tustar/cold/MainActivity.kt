@@ -1,16 +1,17 @@
 package com.tustar.cold
 
 import android.os.Bundle
+import android.support.v4.util.LogWriter
 import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
 import com.tustar.cold.util.Logger
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
-import io.reactivex.ObservableSource
 import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +27,9 @@ class MainActivity : AppCompatActivity() {
         zip()
         contact()
         flatMap()
+        concatMap()
+        distinct()
+        filter()
     }
 
     private fun create() {
@@ -122,13 +126,51 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun flatMap() {
-        Observable.just(1, 2, 3).flatMap(Function<Int, ObservableSource<String>> { integer ->
-            val list = ArrayList<String>()
-            (0..2).forEach {
-                list.add("I am value $integer")
-            }
-            val delayTime = 1 + Math.random() * 10L
-            Observable.fromIterable(list).delay(delayTime, TimeUnit.MILLISECONDS)
-        })
+        Observable.just(1, 2, 3)
+                .flatMap { integer ->
+                    val list = mutableListOf<String>()
+                    (0..2).forEach {
+                        list.add("I am value $integer")
+                    }
+                    val delayTime = (1 + Math.random() * 10L).toLong()
+                    Observable.fromIterable(list).delay(delayTime, TimeUnit.MILLISECONDS)
+                }.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Logger.d("$it")
+                }
+    }
+
+    private fun concatMap() {
+        Observable.just(1, 2, 3)
+                .concatMap { integer ->
+                    val list = mutableListOf<String>()
+                    (0..2).forEach {
+                        list.add("I am value $integer")
+                    }
+                    val delayTime = (1 + Math.random() * 10L).toLong()
+                    Observable.fromIterable(list).delay(delayTime, TimeUnit.MILLISECONDS)
+                }.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Logger.d("$it")
+                }
+    }
+
+    private fun distinct() {
+        Observable.just(1, 2, 3, 1, 3, 1, 3, 2, 4)
+                .distinct()
+                .subscribe {
+                    Logger.e("$it")
+                }
+    }
+
+    private fun filter() {
+        Observable.just(1, 2, 3, 4, 6, 7, 9)
+                .filter {
+                    it % 2 == 0
+                }.subscribe {
+                    Logger.w("$it")
+                }
     }
 }
