@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 27
@@ -31,7 +30,17 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+    // rxjava1
+    implementation "io.reactivex:rxandroid:$rootProject.rxandroidVersion"
+    implementation "io.reactivex:rxjava:$rootProject.rxjavaVersion"
+
     // rxjava2
-    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
-    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rx2androidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rx2javaVersion"
+
+    //
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+    implementation "android.arch.persistence.room:runtime:1.1.0"
+    kapt "android.arch.lifecycle:compiler:1.1.0"
+    kapt "android.arch.persistence.room:compiler:1.1.0"
 }

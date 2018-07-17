@@ -45,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun toMainActivity() {
-        val intent = Intent(this, MainActivity::class.java).apply {
+        val intent = Intent(this, RxActivity::class.java).apply {
 
         }
         startActivity(intent)
